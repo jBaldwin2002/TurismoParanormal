@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: turismo-paranormal-query
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/bd_query
+
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: turismo-query-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "co.vinni.cqrs.dto"
+        spring.json.value.default.type: "co.vinni.cqrs.dto.ReservaDTO"
+
+server:
+  port: 8622
