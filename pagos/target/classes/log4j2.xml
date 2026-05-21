@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <Properties>
+        <property name="logging.path">${bundle:application:spring.logging.path}</property>
+        <property name="max.size">${bundle:application:spring.logging.max.size}</property>
+        <property name="application.name">${bundle:application:spring.application.name}</property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout>
+                <pattern>
+                    (%d %p %C{1.} [%t] %m%n
+                </pattern>
+            </PatternLayout>
+        </Console>
+        <RollingFile name="RollingFile"
+                     fileName="${logging.path}/${application.name}.log"
+                     filePattern="${logging.path}/${application.name}-%d{dd-MMMM-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <pattern>%d %p %C{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="${max.size}"/>
+            </Policies>
+            <DefaultRolloverStrategy max="1"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console" />
+        </Root>
+        <Logger name="co.vinni" level="trace">
+            <AppenderRef ref="RollingFile" />
+        </Logger>
+    </Loggers>
+</configuration>

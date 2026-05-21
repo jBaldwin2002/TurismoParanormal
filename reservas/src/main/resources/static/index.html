@@ -1,0 +1,684 @@
+<!-- Design System -->
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Aetheria - Crear Reserva</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#131313",
+                        "surface-container": "#201f1f",
+                        "on-tertiary": "#003919",
+                        "surface-container-low": "#1c1b1b",
+                        "tertiary-container": "#005729",
+                        "inverse-surface": "#e5e2e1",
+                        "on-secondary-container": "#afb9cc",
+                        "outline-variant": "#4c4452",
+                        "error-container": "#93000a",
+                        "on-tertiary-container": "#3ed478",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#bdc7db",
+                        "tertiary-fixed-dim": "#4de082",
+                        "surface-container-high": "#2a2a2a",
+                        "on-secondary-fixed": "#121c2a",
+                        "on-primary": "#4a007f",
+                        "tertiary-fixed": "#6dfe9c",
+                        "surface-dim": "#131313",
+                        "on-secondary": "#273140",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#005227",
+                        "on-tertiary-fixed": "#00210c",
+                        "primary": "#dfb7ff",
+                        "tertiary": "#4de082",
+                        "outline": "#988d9e",
+                        "primary-container": "#6b21a8",
+                        "surface-tint": "#dfb7ff",
+                        "secondary-container": "#404a5a",
+                        "surface-variant": "#353534",
+                        "primary-fixed": "#f1dbff",
+                        "on-primary-fixed-variant": "#661aa3",
+                        "surface": "#131313",
+                        "on-primary-container": "#d7a8ff",
+                        "on-error": "#690005",
+                        "on-surface-variant": "#cfc2d4",
+                        "primary-fixed-dim": "#dfb7ff",
+                        "on-surface": "#e5e2e1",
+                        "surface-container-highest": "#353534",
+                        "inverse-on-surface": "#313030",
+                        "secondary": "#bdc7db",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-primary-fixed": "#2d0050",
+                        "secondary-fixed": "#d9e3f7",
+                        "on-secondary-fixed-variant": "#3d4757",
+                        "on-background": "#e5e2e1",
+                        "surface-bright": "#3a3939",
+                        "inverse-primary": "#803abd"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "sidebar-width": "280px",
+                        "unit": "8px",
+                        "margin-desktop": "48px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "label-md": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "body-lg": ["Inter"],
+                        "headline-xl": ["Playfair Display"],
+                        "label-sm": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-xl": ["48px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .fog-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+            opacity: 0.7;
+        }
+
+        .fog-layer {
+            position: absolute;
+            width: 300%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 50%, rgba(77, 224, 130, 0.05) 0%, transparent 40%),
+                        radial-gradient(circle at 70% 60%, rgba(128, 58, 189, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 10% 20%, rgba(77, 224, 130, 0.03) 0%, transparent 30%);
+            animation: drift 30s linear infinite;
+        }
+
+        .fog-layer-2 {
+            position: absolute;
+            width: 300%;
+            height: 100%;
+            background: radial-gradient(circle at 60% 40%, rgba(128, 58, 189, 0.05) 0%, transparent 40%),
+                        radial-gradient(circle at 20% 70%, rgba(77, 224, 130, 0.04) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 20%, rgba(128, 58, 189, 0.03) 0%, transparent 30%);
+            animation: drift-slow 45s linear infinite reverse;
+        }
+
+        @keyframes drift {
+            0% { transform: translateX(0) scale(1); }
+            50% { transform: translateX(-30%) scale(1.1); }
+            100% { transform: translateX(-60%) scale(1); }
+        }
+
+        @keyframes drift-slow {
+            0% { transform: translateX(-60%) scale(1.05); }
+            50% { transform: translateX(-30%) scale(1); }
+            100% { transform: translateX(0) scale(1.05); }
+        }
+
+        .bg-pulse {
+            animation: pulse-glow 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.7; }
+        }
+
+        .glow-hover:hover {
+            box-shadow: 0 0 20px rgba(107, 33, 168, 0.6);
+            border-color: #dfb7ff;
+        }
+
+        .pulse-button {
+            transition: all 0.5s ease-in-out;
+        }
+
+        .pulse-button:hover {
+            box-shadow: 0 0 25px rgba(223, 183, 255, 0.4);
+            transform: scale(1.02);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #131313;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #353534;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #4c4452;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            opacity: 0.6;
+        }
+        
+        select {
+            appearance: none;
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex antialiased custom-scrollbar relative">
+<!-- Atmospheric Fog Background -->
+<div class="fog-container">
+    <div class="absolute inset-0 bg-gradient-to-br from-background via-surface-container/50 to-background bg-pulse"></div>
+    <div class="fog-layer"></div>
+    <div class="fog-layer-2"></div>
+</div>
+
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-background/80 backdrop-blur-xl fixed left-0 top-0 h-full w-sidebar-width border-r border-surface-variant shadow-[0_0_15px_rgba(223,183,255,0.2)] flex-col py-margin-desktop px-unit z-20">
+    <!-- Header / Logo -->
+    <div class="flex flex-col items-center mb-12 px-4">
+        <img alt="Paranormal Tourism Logo" class="w-24 h-24 rounded-full mb-4 border-2 border-surface-variant glow-hover transition-all duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtrIufnB1s7uIeTvk1GYJ8dUnkGEVyHhmO9D-kgypx0CPdbsCDzB_gNgZ9nWIRqyQvZpzdnrR4H-IsaKqXgCJaoc2y_VLkFYWQRk-ICF-BRiPlcu3KFiO65jS8D567yhAuE6lBYqYn0UWQkYJ2uCnf05uXayykYbOjjnnI2n2DOCkTIfDZM8R_AI_R5pNyCSXGQCdDsOLZZrAW_Up2A7xpJnUsqA4W9-Si3PvjhGo2barSyC7s1Td2ToAuDsUCm1LSvNsIgu0V-WnX"/>
+        <h1 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tighter text-center">Aetheria</h1>
+        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mt-1">Paranormal Tourism</p>
+    </div>
+    <!-- Navigation Links -->
+    <ul class="flex flex-col space-y-2 flex-grow">
+        <li>
+            <a class="flex items-center px-4 py-3 text-primary font-bold border-r-2 border-primary bg-surface-container/30" href="http://localhost:8630/">
+                <span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 1;">calendar_add_on</span>
+                <span class="font-label-md text-label-md">Crear Reserva</span>
+            </a>
+        </li>
+        <li>
+            <a class="flex items-center px-4 py-3 text-on-surface-variant font-medium hover:text-tertiary hover:drop-shadow-[0_0_8px_rgba(77,224,130,0.6)] transition-all duration-500" href="http://localhost:8632/">
+                <span class="material-symbols-outlined mr-4">payments</span>
+                <span class="font-label-md text-label-md">Panel de Pagos</span>
+            </a>
+        </li>
+        <li>
+            <a class="flex items-center px-4 py-3 text-on-surface-variant font-medium hover:text-tertiary hover:drop-shadow-[0_0_8px_rgba(77,224,130,0.6)] transition-all duration-500" href="http://localhost:8634/">
+                <span class="material-symbols-outlined mr-4">door_front</span>
+                <span class="font-label-md text-label-md">Control de Ingreso</span>
+            </a>
+        </li>
+    </ul>
+    <!-- Footer -->
+    <div class="mt-auto pt-8 border-t border-surface-variant/50 flex justify-center">
+        <div class="flex items-center text-on-surface-variant/60 font-label-sm text-label-sm">
+            <span class="material-symbols-outlined text-[16px] mr-2">copyright</span>
+            Turismo Paranormal © 2026
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Bottom Nav (Fallback) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-high/90 backdrop-blur-xl border-t border-surface-variant z-50 flex justify-around py-3 px-4">
+    <a class="flex flex-col items-center text-primary" href="http://localhost:8630/">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_add_on</span>
+        <span class="font-label-sm text-label-sm mt-1 text-[10px]">Reserva</span>
+    </a>
+    <a class="flex flex-col items-center text-on-surface-variant" href="http://localhost:8632/">
+        <span class="material-symbols-outlined">payments</span>
+        <span class="font-label-sm text-label-sm mt-1 text-[10px]">Pagos</span>
+    </a>
+    <a class="flex flex-col items-center text-on-surface-variant" href="http://localhost:8634/">
+        <span class="material-symbols-outlined">door_front</span>
+        <span class="font-label-sm text-label-sm mt-1 text-[10px]">Ingreso</span>
+    </a>
+</nav>
+
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-[280px] p-margin-mobile md:p-margin-desktop relative z-10 pb-24 md:pb-margin-desktop flex flex-col items-center justify-center min-h-screen">
+    <div class="w-full max-w-3xl">
+        <!-- Header Section -->
+        <header class="mb-12 text-center md:text-left">
+            <h2 class="font-headline-xl text-headline-xl text-on-surface mb-2 drop-shadow-[0_0_10px_rgba(223,183,255,0.1)]">Invocar Experiencia</h2>
+            <p class="font-body-md text-body-md text-on-surface-variant">Configura los parámetros para la próxima inmersión paranormal.</p>
+        </header>
+
+        <!-- Notification container -->
+        <div id="alertContainer" class="mb-6 hidden"></div>
+
+        <!-- Reservation Form Card (Glassmorphism) -->
+        <div id="formCard" class="bg-surface-container/40 backdrop-blur-md border border-surface-variant/50 rounded-xl p-8 relative overflow-hidden group">
+            <!-- Subtle internal mist effect -->
+            <div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none"></div>
+            
+            <form class="space-y-8 relative z-10" id="reservationForm">
+                <!-- Top Row: Name, Email & Date -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="space-y-2">
+                        <label class="font-label-md text-label-md text-on-surface flex items-center" for="userName">
+                            <span class="material-symbols-outlined text-[18px] mr-2 text-primary">person</span>
+                            Identidad del Explorador
+                        </label>
+                        <input class="w-full bg-[#1a1a1a] border-0 border-b border-surface-variant focus:border-primary focus:ring-0 text-on-surface font-body-md text-body-md py-3 px-4 transition-colors placeholder:text-on-surface-variant/50" id="userName" name="userName" placeholder="Nombre completo..." required type="text"/>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="font-label-md text-label-md text-on-surface flex items-center" for="userEmail">
+                            <span class="material-symbols-outlined text-[18px] mr-2 text-primary">mail</span>
+                            Correo de Contacto
+                        </label>
+                        <input class="w-full bg-[#1a1a1a] border-0 border-b border-surface-variant focus:border-primary focus:ring-0 text-on-surface font-body-md text-body-md py-3 px-4 transition-colors placeholder:text-on-surface-variant/50" id="userEmail" name="userEmail" placeholder="correo@ejemplo.com..." required type="email"/>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="font-label-md text-label-md text-on-surface flex items-center" for="tourDate">
+                            <span class="material-symbols-outlined text-[18px] mr-2 text-primary">event</span>
+                            Noche de Incursión
+                        </label>
+                        <input class="w-full bg-[#1a1a1a] border-0 border-b border-surface-variant focus:border-primary focus:ring-0 text-on-surface font-body-md text-body-md py-3 px-4 transition-colors" id="tourDate" name="tourDate" required type="date"/>
+                    </div>
+                </div>
+
+                <!-- Tour Selection -->
+                <div class="space-y-4">
+                    <label class="font-label-md text-label-md text-on-surface flex items-center">
+                        <span class="material-symbols-outlined text-[18px] mr-2 text-tertiary">location_on</span>
+                        Punto de Manifestación
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="tourSelection">
+                        <!-- Option 1 -->
+                        <label class="cursor-pointer">
+                            <input class="peer sr-only" data-price="45" name="tourType" required type="radio" value="huespedes" checked/>
+                            <div class="bg-[#1a1a1a] border border-surface-variant rounded-lg p-4 peer-checked:border-primary peer-checked:bg-primary-container/20 peer-checked:shadow-[0_0_15px_rgba(223,183,255,0.15)] transition-all duration-300">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-headline-lg-mobile text-headline-lg-mobile text-[18px] text-on-surface">Casa de Huéspedes</span>
+                                    <span class="material-symbols-outlined text-surface-variant peer-checked:text-primary">visibility</span>
+                                </div>
+                                <p class="font-body-md text-body-md text-[14px] text-on-surface-variant">Actividad poltergeist moderada.</p>
+                            </div>
+                        </label>
+                        <!-- Option 2 -->
+                        <label class="cursor-pointer">
+                            <input class="peer sr-only" data-price="60" name="tourType" type="radio" value="cementerio"/>
+                            <div class="bg-[#1a1a1a] border border-surface-variant rounded-lg p-4 peer-checked:border-primary peer-checked:bg-primary-container/20 peer-checked:shadow-[0_0_15px_rgba(223,183,255,0.15)] transition-all duration-300">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-headline-lg-mobile text-headline-lg-mobile text-[18px] text-on-surface">Noche en el Cementerio</span>
+                                    <span class="material-symbols-outlined text-surface-variant peer-checked:text-primary">mode_night</span>
+                                </div>
+                                <p class="font-body-md text-body-md text-[14px] text-on-surface-variant">Avistamientos ectoplásmicos.</p>
+                            </div>
+                        </label>
+                        <!-- Option 3 -->
+                        <label class="cursor-pointer">
+                            <input class="peer sr-only" data-price="80" name="tourType" type="radio" value="tuneles"/>
+                            <div class="bg-[#1a1a1a] border border-surface-variant rounded-lg p-4 peer-checked:border-error peer-checked:bg-error-container/20 peer-checked:shadow-[0_0_15px_rgba(255,180,171,0.15)] transition-all duration-300 relative overflow-hidden">
+                                <div class="absolute right-0 top-0 bg-error/20 text-error px-2 py-1 rounded-bl-lg font-label-sm text-label-sm flex items-center">
+                                    <span class="material-symbols-outlined text-[14px] mr-1">skull</span> Nivel 4
+                                </div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-headline-lg-mobile text-headline-lg-mobile text-[18px] text-on-surface">Túneles del Terror</span>
+                                    <span class="material-symbols-outlined text-surface-variant peer-checked:text-error">water_drop</span>
+                                </div>
+                                <p class="font-body-md text-body-md text-[14px] text-on-surface-variant">Atmósfera opresiva, no apto para cardíacos.</p>
+                            </div>
+                        </label>
+                        <!-- Option 4 -->
+                        <label class="cursor-pointer">
+                            <input class="peer sr-only" data-price="120" name="tourType" type="radio" value="mansion"/>
+                            <div class="bg-[#1a1a1a] border border-surface-variant rounded-lg p-4 peer-checked:border-primary peer-checked:bg-primary-container/20 peer-checked:shadow-[0_0_15px_rgba(223,183,255,0.15)] transition-all duration-300">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-headline-lg-mobile text-headline-lg-mobile text-[18px] text-on-surface">Mansión Abandonada</span>
+                                    <span class="material-symbols-outlined text-surface-variant peer-checked:text-primary">home_work</span>
+                                </div>
+                                <p class="font-body-md text-body-md text-[14px] text-on-surface-variant">Investigación completa. Equipo EVP incluido.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Bottom Row: Time & Pax -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="font-label-md text-label-md text-on-surface flex items-center" for="nightTime">
+                            <span class="material-symbols-outlined text-[18px] mr-2 text-on-surface-variant">schedule</span>
+                            Franja Horaria
+                        </label>
+                        <select class="w-full bg-[#1a1a1a] border-0 border-b border-surface-variant focus:border-primary focus:ring-0 text-on-surface font-body-md text-body-md py-3 px-4 transition-colors" id="nightTime" name="nightTime" required>
+                            <option disabled value="">Selecciona una hora...</option>
+                            <option value="20:00">20:00 - El Descenso</option>
+                            <option value="21:00">21:00 - Penumbra</option>
+                            <option value="22:00">22:00 - Hora Cero</option>
+                            <option value="23:00">23:00 - Medianoche Profunda</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="font-label-md text-label-md text-on-surface flex items-center" for="paxCount">
+                            <span class="material-symbols-outlined text-[18px] mr-2 text-on-surface-variant">group</span>
+                            Número de Almas
+                        </label>
+                        <div class="flex items-center bg-[#1a1a1a] border-b border-surface-variant focus-within:border-primary transition-colors">
+                            <button class="px-4 py-3 text-on-surface-variant hover:text-primary transition-colors" id="btnMinus" type="button">
+                                <span class="material-symbols-outlined">remove</span>
+                            </button>
+                            <input class="w-full bg-transparent border-0 text-center text-on-surface font-headline-lg-mobile text-headline-lg-mobile focus:ring-0 p-0" id="paxCount" max="10" min="1" name="paxCount" readonly required type="number" value="1"/>
+                            <button class="px-4 py-3 text-on-surface-variant hover:text-primary transition-colors" id="btnPlus" type="button">
+                                <span class="material-symbols-outlined">add</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total & CTA -->
+                <div class="pt-8 mt-4 border-t border-surface-variant/50 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="text-center md:text-left">
+                        <p class="font-label-md text-label-md text-on-surface-variant mb-1">Costo del Ritual</p>
+                        <p class="font-display-lg text-display-lg text-[40px] text-tertiary flex items-baseline gap-1" style="text-shadow: 0 0 15px rgba(77,224,130,0.3);">
+                            <span class="text-[24px]">$</span><span id="totalDisplay">0.00</span>
+                        </p>
+                    </div>
+                    <button class="w-full md:w-auto bg-primary-container text-on-primary-container font-label-md text-label-md px-8 py-4 rounded-full uppercase tracking-widest pulse-button hover:bg-inverse-primary hover:text-white flex items-center justify-center gap-3" type="submit" id="btnSubmit">
+                        <span>Reservar tu Experiencia</span>
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Success Card (Initially Hidden) -->
+            <div id="successCard" class="hidden relative z-10 flex flex-col items-center justify-center text-center py-6 space-y-6">
+                <div class="w-20 h-20 bg-tertiary-container/30 border border-tertiary rounded-full flex items-center justify-center text-tertiary animate-bounce">
+                    <span class="material-symbols-outlined text-[48px]">check_circle</span>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="font-headline-lg text-headline-lg text-on-surface">¡Invocación Exitosa!</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant">Tu experiencia paranormal ha sido registrada en el plano PostgreSQL y transmitida al broker Kafka.</p>
+                </div>
+                
+                <!-- Ticket details box -->
+                <div class="w-full max-w-md bg-background/60 border border-surface-variant/60 rounded-lg p-6 space-y-4 text-left font-body-md text-body-md text-on-surface-variant">
+                    <div class="flex justify-between border-b border-surface-variant/30 pb-2">
+                        <span class="text-primary font-label-md text-label-md">ID DE RESERVA</span>
+                        <span class="font-label-md text-label-md font-bold text-on-surface selection:bg-primary" id="resIdDisplay">--</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Explorador</span>
+                        <span class="text-on-surface" id="resNameDisplay">--</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Correo</span>
+                        <span class="text-on-surface font-label-sm text-label-sm" id="resEmailDisplay">--</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Manifestación</span>
+                        <span class="text-on-surface" id="resTourDisplay">--</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Almas</span>
+                        <span class="text-on-surface" id="resPaxDisplay">--</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Noche y Hora</span>
+                        <span class="text-on-surface" id="resDateDisplay">--</span>
+                    </div>
+                    <div class="flex justify-between border-t border-surface-variant/30 pt-2 font-bold">
+                        <span class="text-tertiary">Monto por Persona</span>
+                        <span class="text-tertiary" id="resMontoDisplay">$75,000.00</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
+                    <button class="bg-[#1a1a1a] border border-surface-variant text-on-surface px-6 py-3 rounded-full hover:border-primary transition-all font-label-md text-label-md" id="btnCopyId">
+                        Copiar ID de Reserva
+                    </button>
+                    <a class="bg-primary-container text-on-primary-container hover:bg-inverse-primary hover:text-white px-8 py-3 rounded-full font-label-md text-label-md uppercase tracking-widest pulse-button flex items-center justify-center gap-2" href="http://localhost:8632/">
+                        Proceder al Pago
+                        <span class="material-symbols-outlined text-[18px]">payments</span>
+                    </a>
+                </div>
+
+                <button class="text-on-surface-variant/60 hover:text-primary transition-colors text-sm underline pt-4" id="btnResetForm">
+                    Realizar otra reserva
+                </button>
+            </div>
+        </div>
+
+        <!-- Atmospheric decorative element -->
+        <div class="mt-12 text-center opacity-30 pointer-events-none">
+            <span class="material-symbols-outlined text-[48px] text-primary" style="font-variation-settings: 'wght' 100;">cruelty_free</span>
+        </div>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('reservationForm');
+        const formCard = document.getElementById('formCard');
+        const successCard = document.getElementById('successCard');
+        const alertContainer = document.getElementById('alertContainer');
+        
+        const paxInput = document.getElementById('paxCount');
+        const btnMinus = document.getElementById('btnMinus');
+        const btnPlus = document.getElementById('btnPlus');
+        const totalDisplay = document.getElementById('totalDisplay');
+        const radios = document.querySelectorAll('input[name="tourType"]');
+        const tourDateInput = document.getElementById('tourDate');
+        const nightTimeSelect = document.getElementById('nightTime');
+        const btnSubmit = document.getElementById('btnSubmit');
+
+        let currentPrice = 45; // default checked (huespedes)
+        let currentPax = 1;
+
+        // Map frontend values to backend valid values
+        const tourMapping = {
+            'huespedes': { backendId: 'TOUR-001', label: 'Casa de Huéspedes' },
+            'cementerio': { backendId: 'TOUR-002', label: 'Noche en el Cementerio' },
+            'tuneles': { backendId: 'TOUR-003', label: 'Túneles del Terror' },
+            'mansion': { backendId: 'TOUR-004', label: 'Mansión Abandonada' }
+        };
+
+        // 1. Dynamic "Inmediato (Hora Actual)" Select option & Today's default date
+        const now = new Date();
+        // Adjust for timezone offset
+        const localNow = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+        const todayString = localNow.toISOString().split('T')[0];
+        tourDateInput.value = todayString;
+
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const currentTimeString = `${hours}:${minutes}`;
+
+        const dynamicOption = document.createElement('option');
+        dynamicOption.value = currentTimeString;
+        dynamicOption.textContent = `Inmediato (Hora Actual - ${currentTimeString})`;
+        dynamicOption.selected = true;
+        nightTimeSelect.insertBefore(dynamicOption, nightTimeSelect.firstChild.nextSibling);
+
+        // Calculate and update the total price displayed in the UI (mock price)
+        function updateTotal() {
+            const total = currentPrice * currentPax;
+            totalDisplay.textContent = total.toFixed(2);
+            
+            // Add a subtle flicker effect when price changes
+            totalDisplay.style.opacity = 0.5;
+            setTimeout(() => totalDisplay.style.opacity = 1, 100);
+        }
+
+        radios.forEach(radio => {
+            if (radio.checked) {
+                currentPrice = parseFloat(radio.dataset.price);
+            }
+            radio.addEventListener('change', (e) => {
+                currentPrice = parseFloat(e.target.dataset.price);
+                updateTotal();
+            });
+        });
+
+        updateTotal();
+
+        btnMinus.addEventListener('click', () => {
+            if (currentPax > 1) {
+                currentPax--;
+                paxInput.value = currentPax;
+                updateTotal();
+            }
+        });
+
+        btnPlus.addEventListener('click', () => {
+            if (currentPax < 10) {
+                currentPax++;
+                paxInput.value = currentPax;
+                updateTotal();
+            }
+        });
+
+        function showAlert(message, isError = true) {
+            alertContainer.className = `mb-6 p-4 rounded-lg font-body-md text-body-md flex items-center gap-3 ${
+                isError 
+                    ? 'bg-error-container/20 border border-error/50 text-error' 
+                    : 'bg-tertiary-container/20 border border-tertiary/50 text-on-tertiary-container'
+            }`;
+            alertContainer.innerHTML = `
+                <span class="material-symbols-outlined">${isError ? 'error' : 'check_circle'}</span>
+                <span>${message}</span>
+            `;
+            alertContainer.classList.remove('hidden');
+            alertContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function hideAlert() {
+            alertContainer.classList.add('hidden');
+        }
+
+        let generatedReservaId = null;
+
+        // Copy ID to clipboard
+        document.getElementById('btnCopyId').addEventListener('click', () => {
+            if (generatedReservaId) {
+                navigator.clipboard.writeText(generatedReservaId).then(() => {
+                    const btn = document.getElementById('btnCopyId');
+                    const originalText = btn.textContent;
+                    btn.textContent = '¡Copiado!';
+                    btn.classList.add('border-tertiary', 'text-tertiary');
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.classList.remove('border-tertiary', 'text-tertiary');
+                    }, 2000);
+                });
+            }
+        });
+
+        // Reset form to book again
+        document.getElementById('btnResetForm').addEventListener('click', () => {
+            form.reset();
+            currentPax = 1;
+            paxInput.value = 1;
+            radios[0].checked = true;
+            currentPrice = parseFloat(radios[0].dataset.price);
+            updateTotal();
+            tourDateInput.value = todayString;
+            dynamicOption.value = `${String(new Date().getHours()).padStart(2, '0')}:${String(new Date().getMinutes()).padStart(2, '0')}`;
+            dynamicOption.textContent = `Inmediato (Hora Actual - ${dynamicOption.value})`;
+            dynamicOption.selected = true;
+
+            successCard.classList.add('hidden');
+            form.classList.remove('hidden');
+            hideAlert();
+        });
+
+        // 2. Submit booking to microservice API
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            hideAlert();
+
+            const userName = document.getElementById('userName').value.trim();
+            const userEmail = document.getElementById('userEmail').value.trim();
+            const tourDate = tourDateInput.value;
+            const nightTime = nightTimeSelect.value;
+            
+            const selectedRadio = document.querySelector('input[name="tourType"]:checked');
+            const mappedTour = tourMapping[selectedRadio.value];
+
+            // Build request payload
+            // LocalDateTime format expected: yyyy-MM-ddTHH:mm:ss
+            const fechaTourString = `${tourDate}T${nightTime}:00`;
+
+            const payload = {
+                tourId: mappedTour.backendId,
+                nombreCliente: userName,
+                emailCliente: userEmail,
+                cantidadPersonas: currentPax,
+                fechaTour: fechaTourString
+            };
+
+            // UI Feedback
+            const originalBtnHtml = btnSubmit.innerHTML;
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<span class="material-symbols-outlined animate-spin">hourglass_empty</span> Convocando...';
+
+            fetch('http://localhost:8630/api/reservas/commands/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(async response => {
+                const text = await response.text();
+                if (!response.ok) {
+                    throw new Error(text || 'Error al comunicarse con el plano espectral.');
+                }
+                return JSON.parse(text);
+            })
+            .then(data => {
+                // Populate success card
+                generatedReservaId = data.id;
+                document.getElementById('resIdDisplay').textContent = data.id;
+                document.getElementById('resNameDisplay').textContent = data.nombreCliente;
+                document.getElementById('resEmailDisplay').textContent = data.emailCliente;
+                document.getElementById('resTourDisplay').textContent = `${mappedTour.label} (${data.tourId})`;
+                document.getElementById('resPaxDisplay').textContent = `${data.cantidadPersonas} alma(s)`;
+                
+                // Format date for display
+                const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+                const formattedDate = new Date(data.fechaTour).toLocaleDateString('es-ES', options);
+                document.getElementById('resDateDisplay').textContent = formattedDate;
+
+                // Animate transition
+                form.classList.add('hidden');
+                successCard.classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error reserving:', error);
+                showAlert(error.message);
+            })
+            .finally(() => {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = originalBtnHtml;
+            });
+        });
+    });
+</script>
+</body>
+</html>

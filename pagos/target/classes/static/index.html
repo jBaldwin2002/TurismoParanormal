@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Panel de Pagos - Aetheria</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&amp;family=JetBrains+Mono:wght@500&amp;family=Inter:wght@400&amp;display=swap" rel="stylesheet"/>
+    <style>
+        body {
+            background-color: #131313;
+            color: #e5e2e1;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* Mist/Fog Effect */
+        .fog-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+            background: radial-gradient(circle at center, rgba(32, 31, 31, 0.2) 0%, #131313 100%);
+            animation: bgPulse 15s ease-in-out infinite alternate;
+        }
+
+        .fog-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background: radial-gradient(ellipse at 25% 40%, rgba(77, 224, 130, 0.08) 0%, transparent 40%),
+                        radial-gradient(ellipse at 75% 60%, rgba(223, 183, 255, 0.08) 0%, transparent 40%);
+            animation: drift 45s linear infinite, pulseGlow 8s ease-in-out infinite alternate;
+        }
+        
+        .fog-layer-2 {
+            position: absolute;
+            top: -20%;
+            left: -100%;
+            width: 200%;
+            height: 120%;
+            background: radial-gradient(ellipse at 60% 30%, rgba(223, 183, 255, 0.06) 0%, transparent 50%),
+                        radial-gradient(ellipse at 30% 70%, rgba(77, 224, 130, 0.06) 0%, transparent 50%);
+            animation: drift-reverse 60s linear infinite, pulseGlow 12s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes drift {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        @keyframes drift-reverse {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(50%); }
+        }
+
+        @keyframes pulseGlow {
+            0% { opacity: 0.4; }
+            100% { opacity: 0.9; }
+        }
+
+        @keyframes bgPulse {
+            0% { background-color: #131313; }
+            100% { background-color: #181818; }
+        }
+
+        /* Luminous Hover Effects */
+        .glass-card {
+            background: rgba(32, 31, 31, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(76, 68, 82, 0.5);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: #dfb7ff;
+            box-shadow: 0 0 15px rgba(223, 183, 255, 0.2);
+        }
+
+        .btn-primary {
+            background-color: #dfb7ff;
+            color: #4a007f;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 20px rgba(223, 183, 255, 0.4);
+            transform: scale(1.02);
+        }
+
+        .btn-secondary {
+            border: 1px solid rgba(76, 68, 82, 0.8);
+            color: #e5e2e1;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: #4de082;
+            color: #4de082;
+            text-shadow: 0 0 8px rgba(77, 224, 130, 0.6);
+        }
+
+        /* Table Row Hover */
+        .table-row-hover:hover {
+            background-color: rgba(223, 183, 255, 0.05);
+        }
+
+        /* Outer Glows */
+        .glow-active {
+            box-shadow: 0 0 15px rgba(77, 224, 130, 0.2);
+        }
+        
+        .glow-pending {
+            box-shadow: 0 0 15px rgba(223, 183, 255, 0.2);
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "background": "#131313",
+                      "surface-container": "#201f1f",
+                      "on-tertiary": "#003919",
+                      "surface-container-low": "#1c1b1b",
+                      "tertiary-container": "#005729",
+                      "inverse-surface": "#e5e2e1",
+                      "on-secondary-container": "#afb9cc",
+                      "outline-variant": "#4c4452",
+                      "error-container": "#93000a",
+                      "on-tertiary-container": "#3ed478",
+                      "on-error-container": "#ffdad6",
+                      "secondary-fixed-dim": "#bdc7db",
+                      "tertiary-fixed-dim": "#4de082",
+                      "surface-container-high": "#2a2a2a",
+                      "on-secondary-fixed": "#121c2a",
+                      "on-primary": "#4a007f",
+                      "tertiary-fixed": "#6dfe9c",
+                      "surface-dim": "#131313",
+                      "on-secondary": "#273140",
+                      "error": "#ffb4ab",
+                      "on-tertiary-fixed-variant": "#005227",
+                      "on-tertiary-fixed": "#00210c",
+                      "primary": "#dfb7ff",
+                      "tertiary": "#4de082",
+                      "outline": "#988d9e",
+                      "primary-container": "#6b21a8",
+                      "surface-tint": "#dfb7ff",
+                      "secondary-container": "#404a5a",
+                      "surface-variant": "#353534",
+                      "primary-fixed": "#f1dbff",
+                      "on-primary-fixed-variant": "#661aa3",
+                      "surface": "#131313",
+                      "on-primary-container": "#d7a8ff",
+                      "on-error": "#690005",
+                      "on-surface-variant": "#cfc2d4",
+                      "primary-fixed-dim": "#dfb7ff",
+                      "on-surface": "#e5e2e1",
+                      "surface-container-highest": "#353534",
+                      "inverse-on-surface": "#313030",
+                      "secondary": "#bdc7db",
+                      "surface-container-lowest": "#0e0e0e",
+                      "on-primary-fixed": "#2d0050",
+                      "secondary-fixed": "#d9e3f7",
+                      "on-secondary-fixed-variant": "#3d4757",
+                      "on-background": "#e5e2e1",
+                      "surface-bright": "#3a3939",
+                      "inverse-primary": "#803abd"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "sidebar-width": "280px",
+                      "unit": "8px",
+                      "margin-desktop": "48px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px",
+                      "container-max": "1280px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Playfair Display"],
+                      "display-lg": ["Playfair Display"],
+                      "label-md": ["JetBrains Mono"],
+                      "body-md": ["Inter"],
+                      "headline-lg-mobile": ["Playfair Display"],
+                      "body-lg": ["Inter"],
+                      "headline-xl": ["Playfair Display"],
+                      "label-sm": ["JetBrains Mono"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                      "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                      "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                      "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                      "headline-lg-mobile": ["28px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                      "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                      "headline-xl": ["48px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                      "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "500" }]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background min-h-screen flex selection:bg-primary selection:text-on-primary">
+<div class="fog-container">
+    <div class="fog-layer"></div>
+    <div class="fog-layer-2"></div>
+</div>
+
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full py-margin-desktop px-unit bg-background/80 backdrop-blur-xl fixed left-0 top-0 w-sidebar-width border-r border-surface-variant shadow-[0_0_15px_rgba(223,183,255,0.2)] z-50">
+    <div class="flex items-center gap-unit px-gutter mb-margin-desktop">
+        <img alt="Paranormal Tourism Logo" class="w-12 h-12 rounded-lg object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtrIufnB1s7uIeTvk1GYJ8dUnkGEVyHhmO9D-kgypx0CPdbsCDzB_gNgZ9nWIRqyQvZpzdnrR4H-IsaKqXgCJaoc2y_VLkFYWQRk-ICF-BRiPlcu3KFiO65jS8D567yhAuE6lBYqYn0UWQkYJ2uCnf05uXayykYbOjjnnI2n2DOCkTIfDZM8R_AI_R5pNyCSXGQCdDsOLZZrAW_Up2A7xpJnUsqA4W9-Si3PvjhGo2barSyC7s1Td2ToAuDsUCm1LSvNsIgu0V-WnX"/>
+        <div>
+            <h1 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tighter">Aetheria</h1>
+            <p class="font-label-md text-label-md text-on-surface-variant">Paranormal Tourism</p>
+        </div>
+    </div>
+    <ul class="flex flex-col gap-2 flex-grow px-unit">
+        <li>
+            <a class="flex items-center gap-3 px-gutter py-3 rounded-lg text-on-surface-variant font-medium hover:text-tertiary hover:drop-shadow-[0_0_8px_rgba(77,224,130,0.6)] transition-all duration-500 font-label-md text-label-md" href="http://localhost:8630/">
+                <span class="material-symbols-outlined" style="font-weight: 300;">calendar_add_on</span>
+                Crear Reserva
+            </a>
+        </li>
+        <li>
+            <a class="flex items-center gap-3 px-gutter py-3 rounded-lg text-primary font-bold border-r-2 border-primary bg-primary/5 font-label-md text-label-md" href="http://localhost:8632/" style="transform: scale(0.95); transition: transform 300ms ease-in-out;">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+                Panel de Pagos
+            </a>
+        </li>
+        <li>
+            <a class="flex items-center gap-3 px-gutter py-3 rounded-lg text-on-surface-variant font-medium hover:text-tertiary hover:drop-shadow-[0_0_8px_rgba(77,224,130,0.6)] transition-all duration-500 font-label-md text-label-md" href="http://localhost:8634/">
+                <span class="material-symbols-outlined" style="font-weight: 300;">door_front</span>
+                Control de Ingreso
+            </a>
+        </li>
+    </ul>
+    <div class="mt-auto px-unit pt-gutter border-t border-surface-variant/50">
+        <p class="flex items-center gap-2 px-gutter py-2 text-on-surface-variant font-label-sm text-label-sm opacity-70">
+            <span class="material-symbols-outlined text-[16px]">copyright</span>
+            Turismo Paranormal © 2026
+        </p>
+    </div>
+</nav>
+
+<!-- Mobile Bottom Nav -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-high/90 backdrop-blur-xl border-t border-surface-variant z-50 flex justify-around py-3 px-4">
+    <a class="flex flex-col items-center text-on-surface-variant" href="http://localhost:8630/">
+        <span class="material-symbols-outlined">calendar_add_on</span>
+        <span class="font-label-sm text-label-sm mt-1 text-[10px]">Reserva</span>
+    </a>
+    <a class="flex flex-col items-center text-primary" href="http://localhost:8632/">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+        <span class="font-label-sm text-label-sm mt-1 text-[10px]">Pagos</span>
+    </a>
+    <a class="flex flex-col items-center text-on-surface-variant" href="http://localhost:8634/">
+        <span class="material-symbols-outlined">door_front</span>
+        <span class="font-label-sm text-label-sm mt-1 text-[10px]">Ingreso</span>
+    </a>
+</nav>
+
+<!-- Main Content -->
+<main class="flex-1 md:ml-sidebar-width min-h-screen p-margin-mobile md:p-margin-desktop relative z-10 pb-24 md:pb-margin-desktop">
+    <header class="mb-margin-desktop">
+        <h2 class="font-headline-xl text-headline-xl text-primary mb-2" style="text-shadow: 0 0 20px rgba(223, 183, 255, 0.3);">Panel de Pagos</h2>
+        <p class="font-body-lg text-body-lg text-on-surface-variant">Gestión de transacciones y estado de reservas espectrales.</p>
+    </header>
+
+    <!-- Summary Cards (Bento Grid Style) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-margin-desktop">
+        <div class="glass-card rounded-xl p-gutter relative overflow-hidden group">
+            <div class="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
+                <span class="material-symbols-outlined text-[120px] text-primary">receipt_long</span>
+            </div>
+            <h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest mb-4">Total Reservations</h3>
+            <div class="flex items-end gap-3">
+                <span class="font-display-lg text-display-lg text-on-surface" id="cardTotalReservas">0</span>
+            </div>
+        </div>
+        <div class="glass-card rounded-xl p-gutter relative overflow-hidden group">
+            <div class="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
+                <span class="material-symbols-outlined text-[120px] text-primary">hourglass_empty</span>
+            </div>
+            <h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest mb-4">Pending Payments</h3>
+            <div class="flex items-end gap-3">
+                <span class="font-display-lg text-display-lg text-primary" id="cardPendientes" style="text-shadow: 0 0 15px rgba(223, 183, 255, 0.4);">0</span>
+            </div>
+        </div>
+        <div class="glass-card rounded-xl p-gutter relative overflow-hidden group">
+            <div class="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
+                <span class="material-symbols-outlined text-[120px] text-tertiary">account_balance_wallet</span>
+            </div>
+            <h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest mb-4">Recaudado (Total)</h3>
+            <div class="flex items-end gap-3">
+                <span class="font-display-lg text-display-lg text-tertiary" id="cardRecaudado" style="text-shadow: 0 0 15px rgba(77, 224, 130, 0.3);">$0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Banner inside view -->
+    <div id="paymentAlert" class="mb-6 hidden p-4 rounded-lg font-body-md text-body-md flex items-center gap-3"></div>
+
+    <!-- Reservations Table Container -->
+    <section class="glass-card rounded-xl overflow-hidden">
+        <div class="px-gutter py-6 border-b border-surface-variant/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-surface-container-low/50">
+            <h3 class="font-headline-lg text-headline-lg text-on-surface">Transacciones Recientes</h3>
+            <div class="flex gap-4 w-full sm:w-auto">
+                <div class="relative w-full sm:w-64">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                    <input id="searchInput" class="bg-surface-container border-b border-outline-variant focus:border-primary text-on-surface font-body-md text-body-md py-2 pl-10 pr-4 w-full rounded-t-sm focus:outline-none focus:ring-0 transition-colors bg-opacity-50" placeholder="Buscar explorador..." type="text"/>
+                </div>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-surface-variant bg-surface-container-lowest/30">
+                        <th class="font-label-md text-label-md text-on-surface-variant py-4 px-gutter font-semibold">Reserva ID</th>
+                        <th class="font-label-md text-label-md text-on-surface-variant py-4 px-gutter font-semibold">Explorador</th>
+                        <th class="font-label-md text-label-md text-on-surface-variant py-4 px-gutter font-semibold">Tour</th>
+                        <th class="font-label-md text-label-md text-on-surface-variant py-4 px-gutter font-semibold">Valor</th>
+                        <th class="font-label-md text-label-md text-on-surface-variant py-4 px-gutter font-semibold">Fecha de Pago</th>
+                        <th class="font-label-md text-label-md text-on-surface-variant py-4 px-gutter font-semibold">Estado</th>
+                        <th class="font-label-md text-label-md text-on-surface-variant py-4 px-gutter font-semibold text-right">Acción</th>
+                    </tr>
+                </thead>
+                <tbody class="font-body-md text-body-md text-on-surface" id="tableBody">
+                    <!-- Loading state indicator -->
+                    <tr>
+                        <td colspan="7" class="py-12 text-center text-on-surface-variant/60 font-body-md text-body-md">
+                            <span class="material-symbols-outlined animate-spin text-[32px] mb-2 text-primary">hourglass_empty</span>
+                            <p>Consultando registros de transacciones...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="px-gutter py-4 border-t border-surface-variant/50 flex justify-between items-center bg-surface-container-low/30">
+            <span class="font-label-sm text-label-sm text-on-surface-variant" id="tablePaginationText">Mostrando 0 transacciones</span>
+        </div>
+    </section>
+</main>
+
+<!-- Modal: Procesar Pago (Hidden by default) -->
+<div id="paymentModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-background/80 backdrop-blur-md p-4">
+    <div class="bg-surface-container-low border border-surface-variant rounded-xl max-w-md w-full p-8 space-y-6 shadow-2xl relative">
+        <button id="btnCloseModal" class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <div class="space-y-2">
+            <h3 class="font-headline-lg text-headline-lg text-primary">Confirmar Ritual de Pago</h3>
+            <p class="font-body-md text-body-md text-on-surface-variant">Selecciona el método de transacción espectral para autorizar el acceso físico al tour.</p>
+        </div>
+        <div class="p-4 bg-background/40 border border-surface-variant/30 rounded-lg text-sm space-y-2">
+            <div class="flex justify-between"><span class="text-on-surface-variant">ID de Reserva:</span> <span class="font-bold text-on-surface font-label-md text-label-md" id="modalReservaId">--</span></div>
+            <div class="flex justify-between"><span class="text-on-surface-variant">Explorador:</span> <span class="text-on-surface" id="modalEmail">--</span></div>
+            <div class="flex justify-between"><span class="text-on-surface-variant">Total:</span> <span class="font-bold text-tertiary" id="modalMonto">--</span></div>
+        </div>
+
+        <form id="modalForm" class="space-y-6">
+            <div class="space-y-2">
+                <label class="font-label-md text-label-md text-on-surface flex items-center">
+                    <span class="material-symbols-outlined text-[18px] mr-2 text-primary">point_of_sale</span>
+                    Canal de Transacción
+                </label>
+                <div class="grid grid-cols-2 gap-3" id="methodSelection">
+                    <label class="cursor-pointer">
+                        <input type="radio" name="metodoPago" value="PSE" class="peer sr-only" checked />
+                        <div class="bg-[#1a1a1a] border border-surface-variant rounded-lg p-3 text-center peer-checked:border-primary peer-checked:bg-primary-container/20 transition-all font-label-md text-label-md">PSE</div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="metodoPago" value="TARJETA_CREDITO" class="peer sr-only" />
+                        <div class="bg-[#1a1a1a] border border-surface-variant rounded-lg p-3 text-center peer-checked:border-primary peer-checked:bg-primary-container/20 transition-all font-label-md text-label-md">Crédito</div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="metodoPago" value="TARJETA_DEBITO" class="peer sr-only" />
+                        <div class="bg-[#1a1a1a] border border-surface-variant rounded-lg p-3 text-center peer-checked:border-primary peer-checked:bg-primary-container/20 transition-all font-label-md text-label-md">Débito</div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="metodoPago" value="EFECTIVO" class="peer sr-only" />
+                        <div class="bg-[#1a1a1a] border border-surface-variant rounded-lg p-3 text-center peer-checked:border-primary peer-checked:bg-primary-container/20 transition-all font-label-md text-label-md">Efectivo</div>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" id="btnModalSubmit" class="w-full bg-primary-container text-on-primary-container hover:bg-inverse-primary hover:text-white py-4 rounded-full uppercase tracking-widest font-label-md text-label-md pulse-button flex items-center justify-center gap-2">
+                <span>Ejecutar Pago</span>
+                <span class="material-symbols-outlined">payments</span>
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: Recibo (Hidden by default) -->
+<div id="receiptModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-background/80 backdrop-blur-md p-4">
+    <div class="bg-surface-container-low border border-surface-variant rounded-xl max-w-md w-full p-8 space-y-6 shadow-2xl relative">
+        <button id="btnCloseReceipt" class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <div class="flex flex-col items-center text-center space-y-2">
+            <div class="w-16 h-16 bg-tertiary-container/20 border border-tertiary rounded-full flex items-center justify-center text-tertiary mb-2">
+                <span class="material-symbols-outlined text-[32px]">receipt</span>
+            </div>
+            <h3 class="font-headline-lg text-headline-lg text-tertiary">Recibo Espectral</h3>
+            <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Transacción Liquidada y Verificada</p>
+        </div>
+        
+        <div class="bg-background/60 border border-surface-variant/30 rounded-lg p-6 space-y-4 font-body-md text-body-md text-on-surface-variant">
+            <div class="flex justify-between border-b border-surface-variant/20 pb-2">
+                <span class="font-label-md text-label-md text-primary">COMPROBANTE</span>
+                <span class="font-label-md text-label-md font-bold text-on-surface" id="recComprobante">--</span>
+            </div>
+            <div class="flex justify-between"><span>Reserva ID</span> <span class="text-on-surface font-bold" id="recReservaId">--</span></div>
+            <div class="flex justify-between"><span>Explorador</span> <span class="text-on-surface text-sm" id="recEmail">--</span></div>
+            <div class="flex justify-between"><span>Punto</span> <span class="text-on-surface" id="recTour">--</span></div>
+            <div class="flex justify-between"><span>Método</span> <span class="text-on-surface" id="recMetodo">--</span></div>
+            <div class="flex justify-between"><span>Fecha de Pago</span> <span class="text-on-surface text-sm" id="recFecha">--</span></div>
+            <div class="flex justify-between border-t border-surface-variant/20 pt-2 font-bold">
+                <span class="text-tertiary">Total Pagado</span>
+                <span class="text-tertiary text-lg" id="recMonto">--</span>
+            </div>
+        </div>
+
+        <div class="p-4 bg-tertiary-container/10 border border-tertiary/20 rounded-lg flex items-center gap-3 text-xs text-on-tertiary-container">
+            <span class="material-symbols-outlined text-[20px]">auto_awesome</span>
+            <span>El pase de acceso físico ha sido habilitado por Kafka. Ve a <b>Control de Ingreso</b> para check-in.</span>
+        </div>
+
+        <div class="flex gap-4">
+            <button id="btnPrintReceipt" class="w-1/2 bg-[#1a1a1a] border border-surface-variant text-on-surface py-3 rounded-full hover:border-primary font-label-md text-label-md transition-colors">
+                Imprimir
+            </button>
+            <a class="w-1/2 bg-primary-container text-on-primary-container hover:bg-inverse-primary hover:text-white py-3 rounded-full text-center font-label-md text-label-md uppercase tracking-wider flex items-center justify-center gap-2" href="http://localhost:8634/">
+                Ir a Ingreso
+                <span class="material-symbols-outlined text-[16px]">door_front</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tableBody = document.getElementById('tableBody');
+        const paymentModal = document.getElementById('paymentModal');
+        const receiptModal = document.getElementById('receiptModal');
+        const paymentAlert = document.getElementById('paymentAlert');
+        const searchInput = document.getElementById('searchInput');
+
+        // Modal selectors
+        const btnCloseModal = document.getElementById('btnCloseModal');
+        const modalForm = document.getElementById('modalForm');
+        const modalReservaId = document.getElementById('modalReservaId');
+        const modalEmail = document.getElementById('modalEmail');
+        const modalMonto = document.getElementById('modalMonto');
+        const btnModalSubmit = document.getElementById('btnModalSubmit');
+
+        // Receipt selectors
+        const btnCloseReceipt = document.getElementById('btnCloseReceipt');
+        const recComprobante = document.getElementById('recComprobante');
+        const recReservaId = document.getElementById('recReservaId');
+        const recEmail = document.getElementById('recEmail');
+        const recTour = document.getElementById('recTour');
+        const recMetodo = document.getElementById('recMetodo');
+        const recFecha = document.getElementById('recFecha');
+        const recMonto = document.getElementById('recMonto');
+
+        // Bento Summary
+        const cardTotalReservas = document.getElementById('cardTotalReservas');
+        const cardPendientes = document.getElementById('cardPendientes');
+        const cardRecaudado = document.getElementById('cardRecaudado');
+        const tablePaginationText = document.getElementById('tablePaginationText');
+
+        let transactionsList = [];
+        let activeReservaId = null;
+
+        const tourNames = {
+            'TOUR-001': 'Casa de Huéspedes',
+            'TOUR-002': 'Noche en el Cementerio',
+            'TOUR-003': 'Túneles del Terror',
+            'TOUR-004': 'Mansión Abandonada'
+        };
+
+        const methodNames = {
+            'TARJETA_CREDITO': 'Tarjeta de Crédito',
+            'TARJETA_DEBITO': 'Tarjeta de Débito',
+            'PSE': 'PSE',
+            'EFECTIVO': 'Efectivo'
+        };
+
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(amount);
+        }
+
+        // Fetch transactions from payments query microservice
+        function loadTransactions() {
+            fetch('http://localhost:8632/api/pagos/queries/')
+                .then(async response => {
+                    if (!response.ok) {
+                        throw new Error('Error al conectar con la base de datos de pagos.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    transactionsList = data.reverse(); // Show newest first
+                    updateBentoStats();
+                    renderTable(transactionsList);
+                })
+                .catch(error => {
+                    console.error('Error fetching payments:', error);
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="py-12 text-center text-error font-body-md text-body-md">
+                                <span class="material-symbols-outlined text-[32px] mb-2">error</span>
+                                <p>Error al sincronizar con MongoDB: ${error.message}</p>
+                                <button onclick="window.location.reload()" class="mt-4 px-4 py-2 border border-error/50 rounded-lg hover:bg-error/10 transition-colors">Reintentar</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+        }
+
+        function updateBentoStats() {
+            const total = transactionsList.length;
+            const pending = transactionsList.filter(t => t.estado === 'PENDIENTE').length;
+            const earnings = transactionsList
+                .filter(t => t.estado === 'CONFIRMADO')
+                .reduce((sum, t) => sum + (t.montoTotal || 0), 0);
+
+            cardTotalReservas.textContent = total;
+            cardPendientes.textContent = pending;
+            cardRecaudado.textContent = formatCurrency(earnings);
+            tablePaginationText.textContent = `Mostrando ${total} de ${total} reservas`;
+        }
+
+        function renderTable(list) {
+            if (list.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="py-12 text-center text-on-surface-variant/60 font-body-md text-body-md">
+                            <span class="material-symbols-outlined text-[32px] mb-2 text-primary">receipt_long</span>
+                            <p>No se encontraron pases de pago en la base de datos.</p>
+                            <p class="text-xs text-on-surface-variant/40 mt-1">Crea una reserva primero para disparar el evento ReservaCreada.</p>
+                            <a href="http://localhost:8630/" class="mt-4 inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-5 py-2 rounded-full hover:bg-primary/20 transition-all font-label-md text-label-md uppercase">Crear Reserva</a>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tableBody.innerHTML = '';
+            list.forEach(tx => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-surface-variant/30 table-row-hover transition-colors font-body-md text-body-md';
+                
+                // Format date
+                let dateDisplay = '--';
+                if (tx.fechaPago) {
+                    const options = { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+                    dateDisplay = new Date(tx.fechaPago).toLocaleDateString('es-ES', options);
+                }
+
+                const tourDisplay = tourNames[tx.tourId] || tx.tourId;
+                const valorDisplay = formatCurrency(tx.montoTotal);
+
+                // Status tag styling
+                let statusHtml = '';
+                if (tx.estado === 'CONFIRMADO') {
+                    statusHtml = `
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-label-sm text-tertiary border border-tertiary/30 bg-tertiary/5 glow-active">
+                            <span class="w-1.5 h-1.5 rounded-full bg-tertiary shadow-[0_0_5px_#4de082]"></span>
+                            PAGADO
+                        </span>
+                    `;
+                } else if (tx.estado === 'PENDIENTE') {
+                    statusHtml = `
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-label-sm text-primary border border-primary/30 bg-primary/5 glow-pending">
+                            <span class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_5px_#dfb7ff] animate-pulse"></span>
+                            PENDIENTE
+                        </span>
+                    `;
+                } else {
+                    statusHtml = `
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-label-sm text-error border border-error/30 bg-error/5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                            ${tx.estado}
+                        </span>
+                    `;
+                }
+
+                // Action button
+                let actionBtnHtml = '';
+                if (tx.estado === 'PENDIENTE') {
+                    actionBtnHtml = `
+                        <button class="btn-primary px-4 py-2 rounded-lg font-label-md text-label-md flex items-center gap-2 ml-auto font-semibold" onclick="openPaymentModal(${tx.reservaId}, '${tx.emailCliente}', ${tx.montoTotal})">
+                            <span class="material-symbols-outlined text-[18px]">point_of_sale</span>
+                            Procesar Pago
+                        </button>
+                    `;
+                } else {
+                    actionBtnHtml = `
+                        <button class="btn-secondary px-4 py-2 rounded-lg font-label-md text-label-md flex items-center gap-2 ml-auto" onclick="openReceipt(${tx.reservaId})">
+                            <span class="material-symbols-outlined text-[18px]">receipt</span>
+                            Ver Recibo
+                        </button>
+                    `;
+                }
+
+                tr.innerHTML = `
+                    <td class="py-4 px-gutter font-label-md text-label-md text-primary font-bold">#${tx.reservaId}</td>
+                    <td class="py-4 px-gutter">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 text-primary flex items-center justify-center font-bold text-xs uppercase">
+                                ${tx.emailCliente.substring(0, 2)}
+                            </div>
+                            <span>${tx.emailCliente}</span>
+                        </div>
+                    </td>
+                    <td class="py-4 px-gutter">${tourDisplay}</td>
+                    <td class="py-4 px-gutter text-tertiary font-bold">${valorDisplay}</td>
+                    <td class="py-4 px-gutter text-on-surface-variant/80">${dateDisplay}</td>
+                    <td class="py-4 px-gutter">${statusHtml}</td>
+                    <td class="py-4 px-gutter text-right">${actionBtnHtml}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // Live search filter
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            if (!query) {
+                renderTable(transactionsList);
+                return;
+            }
+
+            const filtered = transactionsList.filter(tx => {
+                const tour = (tourNames[tx.tourId] || tx.tourId).toLowerCase();
+                const email = tx.emailCliente.toLowerCase();
+                const id = tx.reservaId.toString();
+                return tour.includes(query) || email.includes(query) || id.includes(query);
+            });
+            renderTable(filtered);
+        });
+
+        // Open payment modal
+        window.openPaymentModal = function(reservaId, email, amount) {
+            activeReservaId = reservaId;
+            modalReservaId.textContent = `#${reservaId}`;
+            modalEmail.textContent = email;
+            modalMonto.textContent = formatCurrency(amount);
+            paymentModal.classList.remove('hidden');
+        };
+
+        // Close modal
+        btnCloseModal.addEventListener('click', () => {
+            paymentModal.classList.add('hidden');
+        });
+
+        paymentModal.addEventListener('click', (e) => {
+            if (e.target === paymentModal) paymentModal.classList.add('hidden');
+        });
+
+        // Open Receipt Modal
+        window.openReceipt = function(reservaId) {
+            const tx = transactionsList.find(t => t.reservaId === reservaId);
+            if (!tx) return;
+
+            recComprobante.textContent = tx.comprobante || '--';
+            recReservaId.textContent = `#${tx.reservaId}`;
+            recEmail.textContent = tx.emailCliente;
+            recTour.textContent = tourNames[tx.tourId] || tx.tourId;
+            recMetodo.textContent = methodNames[tx.metodoPago] || tx.metodoPago || '--';
+            
+            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            recFecha.textContent = tx.fechaPago ? new Date(tx.fechaPago).toLocaleDateString('es-ES', options) : '--';
+            recMonto.textContent = formatCurrency(tx.montoTotal);
+
+            receiptModal.classList.remove('hidden');
+        };
+
+        btnCloseReceipt.addEventListener('click', () => {
+            receiptModal.classList.add('hidden');
+        });
+
+        receiptModal.addEventListener('click', (e) => {
+            if (e.target === receiptModal) receiptModal.classList.add('hidden');
+        });
+
+        document.getElementById('btnPrintReceipt').addEventListener('click', () => {
+            window.print();
+        });
+
+        function showAlert(message, isError = true) {
+            paymentAlert.className = `mb-6 p-4 rounded-lg font-body-md text-body-md flex items-center gap-3 ${
+                isError 
+                    ? 'bg-error-container/20 border border-error/50 text-error' 
+                    : 'bg-tertiary-container/20 border border-tertiary/50 text-on-tertiary-container'
+            }`;
+            paymentAlert.innerHTML = `
+                <span class="material-symbols-outlined">${isError ? 'error' : 'check_circle'}</span>
+                <span>${message}</span>
+            `;
+            paymentAlert.classList.remove('hidden');
+            paymentAlert.scrollIntoView({ behavior: 'smooth' });
+            
+            // Hide after 5 seconds if success
+            if (!isError) {
+                setTimeout(() => paymentAlert.classList.add('hidden'), 5000);
+            }
+        }
+
+        // Process payment submit
+        modalForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const selectedMethod = document.querySelector('input[name="metodoPago"]:checked').value;
+            
+            // UI Feedback
+            const originalBtnHtml = btnModalSubmit.innerHTML;
+            btnModalSubmit.disabled = true;
+            btnModalSubmit.innerHTML = '<span class="material-symbols-outlined animate-spin text-[18px]">hourglass_empty</span> Procesando en pasarela...';
+
+            fetch(`http://localhost:8632/api/pagos/commands/${activeReservaId}?metodoPago=${selectedMethod}`, {
+                method: 'POST'
+            })
+            .then(async response => {
+                const text = await response.text();
+                if (!response.ok) {
+                    throw new Error(text || 'Error al autorizar el pago con el plano bancario.');
+                }
+                return JSON.parse(text);
+            })
+            .then(data => {
+                // Success
+                paymentModal.classList.add('hidden');
+                showAlert(`¡Pago procesado exitosamente! Comprobante: ${data.comprobante}`, false);
+                
+                // Reload list to synchronize with Mongo (wait 250ms for Kafka event processing & MongoDB writing)
+                setTimeout(loadTransactions, 250);
+            })
+            .catch(error => {
+                console.error('Error processing payment:', error);
+                paymentModal.classList.add('hidden');
+                showAlert(error.message, true);
+            })
+            .finally(() => {
+                btnModalSubmit.disabled = false;
+                btnModalSubmit.innerHTML = originalBtnHtml;
+            });
+        });
+
+        // Initialize
+        loadTransactions();
+    });
+</script>
+</body>
+</html>
