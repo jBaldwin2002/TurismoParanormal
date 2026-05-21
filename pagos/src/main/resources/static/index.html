@@ -606,14 +606,20 @@
                 let actionBtnHtml = '';
                 if (tx.estado === 'PENDIENTE') {
                     actionBtnHtml = `
-                        <button class="btn-primary px-4 py-2 rounded-lg font-label-md text-label-md flex items-center gap-2 ml-auto font-semibold" onclick="openPaymentModal('${tx.reservaId}', '${tx.emailCliente}', ${tx.montoTotal})">
+                        <button
+                            class="js-process-payment btn-primary px-4 py-2 rounded-lg font-label-md text-label-md flex items-center gap-2 ml-auto font-semibold"
+                            data-reserva-id="${tx.reservaId}"
+                            data-email="${tx.emailCliente}"
+                            data-amount="${tx.montoTotal}">
                             <span class="material-symbols-outlined text-[18px]">point_of_sale</span>
                             Procesar Pago
                         </button>
                     `;
                 } else {
                     actionBtnHtml = `
-                        <button class="btn-secondary px-4 py-2 rounded-lg font-label-md text-label-md flex items-center gap-2 ml-auto" onclick="openReceipt('${tx.reservaId}')">
+                        <button
+                            class="js-open-receipt btn-secondary px-4 py-2 rounded-lg font-label-md text-label-md flex items-center gap-2 ml-auto"
+                            data-reserva-id="${tx.reservaId}">
                             <span class="material-symbols-outlined text-[18px]">receipt</span>
                             Ver Recibo
                         </button>
@@ -639,6 +645,23 @@
                 tableBody.appendChild(tr);
             });
         }
+
+        tableBody.addEventListener('click', (e) => {
+            const paymentButton = e.target.closest('.js-process-payment');
+            if (paymentButton) {
+                window.openPaymentModal(
+                    paymentButton.dataset.reservaId,
+                    paymentButton.dataset.email,
+                    Number(paymentButton.dataset.amount)
+                );
+                return;
+            }
+
+            const receiptButton = e.target.closest('.js-open-receipt');
+            if (receiptButton) {
+                window.openReceipt(receiptButton.dataset.reservaId);
+            }
+        });
 
         // Live search filter
         searchInput.addEventListener('input', (e) => {
@@ -735,7 +758,12 @@
             btnModalSubmit.disabled = true;
             btnModalSubmit.innerHTML = '<span class="material-symbols-outlined animate-spin text-[18px]">hourglass_empty</span> Procesando en pasarela...';
 
-            if (!activeReservaId) { showAlert('Error: no se encontró el ID de reserva activo.'); return; }
+            if (!activeReservaId) {
+                showAlert('Error: no se encontró el ID de reserva activo.');
+                btnModalSubmit.disabled = false;
+                btnModalSubmit.innerHTML = originalBtnHtml;
+                return;
+            }
 
             fetch(`http://localhost:8632/api/pagos/commands/${activeReservaId}?metodoPago=${selectedMethod}`, {
                 method: 'POST'
