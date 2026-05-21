@@ -106,7 +106,8 @@ public class PagoCommandService {
                 .estado("PENDIENTE")
                 .build();
 
-        pagoCommandRepository.save(nuevoPago);
+        PagoCommand pagoGuardado = pagoCommandRepository.save(nuevoPago);
+        kafkaTemplate.send(TOPIC_PAGO, new PagoEvent("PagoPendiente", pagoGuardado));
         log.info("Registro de pago PENDIENTE creado para reservaId={} monto={}",
                 reserva.getId(), montoTotal);
     }
